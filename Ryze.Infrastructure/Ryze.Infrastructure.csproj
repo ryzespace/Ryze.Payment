@@ -6,5 +6,30 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
+    <ItemGroup>
+        <Protobuf Include="Features\WalletBalance\Contracts\**\*.proto"
+                  ProtoRoot="Features\WalletBalance\Contracts"
+                  GrpcServices="Both"
+                  Access="Public" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.32.0" />
+        <PackageReference Include="Grpc.Core.Api" Version="2.71.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.72.0">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Processors\Interfaces\" />
+      <Folder Include="Processors\Operations\" />
+      <Folder Include="Processors\Processor\" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Ryze.Domain\Ryze.Domain.csproj" />
+    </ItemGroup>
 </Project>

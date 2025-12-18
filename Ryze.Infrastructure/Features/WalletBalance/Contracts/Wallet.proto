@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+package ryzespace.wallet.v1;
+
+option csharp_namespace = "RyzeSpace.Wallet.Contracts.V1";
+
+service WalletBalances {
+  rpc TopUpBalance (WalletTopUpBalanceRequest) returns (google.protobuf.Empty);
+}
+
+message WalletTopUpBalanceRequest
+{
+  string wallet_id = 1;
+  double amount = 2;
+  PaymentProviders provider = 3;
+}
+
+enum PaymentProviders {
+  Unknown = 0;
+  Stripe = 1;
+  PayPal = 2;
+}
