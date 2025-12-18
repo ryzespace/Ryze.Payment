@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Ryze.Application/Ryze.Application.csproj" />
+  <Project Path="Ryze.Domain/Ryze.Domain.csproj" />
+  <Project Path="Ryze.Host/Ryze.Host.csproj" />
+  <Project Path="Ryze.Infrastructure/Ryze.Infrastructure.csproj" />
+</Solution>
