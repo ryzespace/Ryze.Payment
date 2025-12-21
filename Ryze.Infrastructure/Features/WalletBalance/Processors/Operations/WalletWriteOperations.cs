@@ -1,9 +1,14 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using ModularityKit.Context.Abstractions;
+using Ryze.Application.Features.WalletBalance.UseCase.Commands.Requests;
 using Ryze.Domain.Features.WalletBalance;
+using Ryze.Domain.Features.WalletBalance.Contexts;
+using Ryze.Domain.Features.WalletBalance.Providers;
+using Ryze.Infrastructure.Features.WalletBalance.Factory;
 using Ryze.Infrastructure.Features.WalletBalance.Processors.Interfaces;
-using Ryze.Infrastructure.Features.WalletBalance.Providers;
 using RyzeSpace.Wallet.Contracts.V1;
+using Wolverine;
 
 namespace Ryze.Infrastructure.Features.WalletBalance.Processors.Operations;
 
@@ -15,35 +20,35 @@ namespace Ryze.Infrastructure.Features.WalletBalance.Processors.Operations;
 /// <item>Delegates top-up operations to registered <see cref="ITopUpProvider"/> instances based on <see cref="PaymentProvider"/>.</item>
 /// <item>Maps gRPC request <see cref="PaymentProviders"/> to internal <see cref="PaymentProvider"/> enum.</item>
 /// <item>Logs top-up operations and ensures type-safe provider selection.</item>
+/// <item>Executes operations within <see cref="RequestContext"/> and <see cref="WalletContext"/> using <see cref="IContextManager{T}"/>.</item>
+/// <item>Publishes <see cref="WalletTopUpCommand"/> to the <see cref="IMessageBus"/> for further processing.</item>
 /// </list>
 /// </remarks>
-public class WalletWriteOperations : IWalletBalanceWriteOperations
+public class WalletWriteOperations(
+    IContextManager<RequestContext> requestContext,
+    IContextManager<WalletContext> walletContext,
+    IMessageBus bus)
+    : IWalletBalanceWriteOperations
 {
-    private readonly Dictionary<PaymentProvider, ITopUpProvider> _providers;
-
-    public WalletWriteOperations(IEnumerable<ITopUpProvider> providers)
-    {
-        _providers = providers.ToDictionary(p => p.ProviderType);
-    }
-    
     /// <inheritdoc />
     public async Task<Empty> TopUpBalance(WalletTopUpBalanceRequest request, ServerCallContext context)
     {
-        var providerType = MapProvider(request.Provider);
-
-        if (!_providers.TryGetValue(providerType, out var provider))
-            throw new InvalidOperationException("Nieznany provider top-up");
-
-        var added = await provider.TopUp(request.WalletId, request.Amount);
-
-        Console.WriteLine($"Wallet {request.WalletId} topped up {added} via {provider.ProviderType}");
+        var requestCtx = RequestGrpcContextFactory.FromGrpc(context);
+        var walletCtx = WalletGrpcContextFactory.FromGrpc(
+            context,
+            request.WalletId);
+        
+        await requestContext.ExecuteInContext(requestCtx, async () =>
+        {
+            await walletContext.ExecuteInContext(walletCtx, async () =>
+            {
+                await bus.InvokeAsync(new WalletTopUpCommand(
+                    (decimal)request.Amount,
+                    (PaymentProvider)request.Provider
+                ));
+            });
+        });
+        
         return new Empty();
     }
-    
-    private static PaymentProvider MapProvider(PaymentProviders protoProvider) => protoProvider switch
-    {
-        PaymentProviders.Stripe => PaymentProvider.Stripe,
-        PaymentProviders.PayPal => PaymentProvider.PayPal,
-        _ => PaymentProvider.Unknown
-    };
 }

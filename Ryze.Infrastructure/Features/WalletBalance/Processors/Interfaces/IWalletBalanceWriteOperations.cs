@@ -21,5 +21,12 @@ public interface IWalletBalanceWriteOperations
     /// <param name="request">A <see cref="WalletTopUpBalanceRequest"/> containing the wallet identifier and amount to top up.</param>
     /// <param name="context">The <see cref="ServerCallContext"/> provided by the gRPC runtime.</param>
     /// <returns>An <see cref="Empty"/> response indicating completion of the operation.</returns>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item>Intended to be implemented asynchronously.</item>
+    /// <item>May throw exceptions if the request is invalid or the top-up operation fails.</item>
+    /// <item>Integrates with gRPC infrastructure for server-side handling of wallet operations.</item>
+    /// </list>
+    /// </remarks>
     Task<Empty> TopUpBalance(WalletTopUpBalanceRequest request, ServerCallContext context);
 }

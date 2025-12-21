@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+      <PackageReference Include="ModularityKit.Context" Version="1.0.0-preview.1" />
     </ItemGroup>
 
 </Project>

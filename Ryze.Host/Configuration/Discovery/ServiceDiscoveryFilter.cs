@@ -16,15 +16,10 @@ public static class ServiceDiscoveryFilter
 {
     private static readonly (string Key, string Name)[] NamespaceTypes =
     [
-        (".DTO", "DTO"),
-        (".Entity", "Entity"),
-        (".ValueObject", "ValueObject"),
+        (".Operations", "Operations"),
         (".Services", "Service"),
-        (".Managers", "Manager"),
         (".Repositories", "Repository"),
         (".Validators", "Validator"),
-        (".Middleware", "Middleware"),
-        (".Controller", "Controller")
     ];
 
     /// <summary>

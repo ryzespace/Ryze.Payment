@@ -8,7 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Features\WalletBalance\" />
+      <ProjectReference Include="..\Ryze.Domain\Ryze.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="ModularityKit.Context" Version="1.0.0-preview.1" />
+      <PackageReference Include="ModularityKit.Context.AspNet" Version="1.0.0-preview.1" />
     </ItemGroup>
 
 </Project>

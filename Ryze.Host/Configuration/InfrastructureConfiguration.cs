@@ -1,4 +1,7 @@
-﻿namespace Ryze.Host.Configuration;
+﻿using Ryze.Host.Configuration.Factory;
+using Wolverine;
+
+namespace Ryze.Host.Configuration;
 
 public static class InfrastructureConfiguration
 {
@@ -13,6 +16,10 @@ public static class InfrastructureConfiguration
         this ConfigureHostBuilder hostBuilder,
         IConfiguration configuration)
     {
-        
+        hostBuilder.UseWolverine(opts =>
+        {
+           // opts.UseFluentValidation();
+           opts.IncludeEventHandlers();
+        });
     }
 }

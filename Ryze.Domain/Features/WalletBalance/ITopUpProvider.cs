@@ -1,6 +1,4 @@
-﻿using Ryze.Domain.Features.WalletBalance;
-
-namespace Ryze.Infrastructure.Features.WalletBalance.Providers;
+﻿namespace Ryze.Domain.Features.WalletBalance.Providers;
 
 /// <summary>
 /// Defines a contract for services that can top up wallet balances via specific payment providers.
@@ -22,8 +20,7 @@ public interface ITopUpProvider
     /// <summary>
     /// Tops up the wallet with the specified amount.
     /// </summary>
-    /// <param name="walletId">The identifier of the wallet to top up.</param>
     /// <param name="amount">The amount to add to the wallet balance.</param>
     /// <returns>The new balance of the wallet after the top-up operation.</returns>
-    Task<double> TopUp(string walletId, double amount);
+    Task<double> TopUp(decimal amount);
 }

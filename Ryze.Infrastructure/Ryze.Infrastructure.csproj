@@ -19,6 +19,9 @@
         <PackageReference Include="Grpc.Tools" Version="2.72.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="ModularityKit.Context" Version="1.0.0-preview.1" />
+        <PackageReference Include="ModularityKit.Context.AspNet" Version="1.0.0-preview.1" />
+        <PackageReference Include="WolverineFx" Version="5.9.1" />
     </ItemGroup>
     
     <ItemGroup>
@@ -30,6 +33,6 @@
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Ryze.Domain\Ryze.Domain.csproj" />
+      <ProjectReference Include="..\Ryze.Application\Ryze.Application.csproj" />
     </ItemGroup>
 </Project>

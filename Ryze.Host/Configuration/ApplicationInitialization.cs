@@ -1,5 +1,8 @@
 ﻿using System.Reflection;
+using ModularityKit.Context.AspNet;
+using Ryze.Application.Features.WalletBalance.UseCase.Commands.Handlers;
 using Ryze.Domain.Features.WalletBalance;
+using Ryze.Domain.Features.WalletBalance.Contexts;
 using Ryze.Host.Configuration.Discovery;
 using Ryze.Infrastructure.Features.WalletBalance.Processors.Interfaces;
 
@@ -30,8 +33,13 @@ public static class ApplicationInitialization
         services.AddDiscoveredServices(GetRelevantAssemblies(), opts =>
         {
             configuration.GetSection("ServiceDiscovery").Bind(opts);
+            opts.ExcludedNamespaces.Add(".UseCase.Commands.Requests");
+            opts.ExcludedNamespaces.Add(".UseCase.Commands.Handlers");
+            opts.ExcludedNamespaces.Add(".Contexts");
         }, discoveryLogger);
         
+        services.AddContext<RequestContext>();
+        services.AddContext<WalletContext>();
         return services;
     }
     
@@ -40,6 +48,7 @@ public static class ApplicationInitialization
     private static Assembly[] GetRelevantAssemblies() =>
         new[]
         {
+            typeof(WalletTopUpHandler).Assembly,  // Application
             typeof(ApplicationInitialization).Assembly,  // Host
             typeof(PaymentProvider).Assembly,               // Domain
             typeof(IWalletBalanceWriteOperations).Assembly,            // Infrastructure
