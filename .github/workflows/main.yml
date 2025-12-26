@@ -1,0 +1,83 @@
+name: 🚀 Build RyzeSpace Payment Microservice
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  DOTNET_VERSION: '10.0.100'
+  SOLUTION_FILE: 'Ryze.Payment.slnx'
+  HOST_PROJECT: 'Ryze.Host/Ryze.Host.csproj'
+
+jobs:
+  build:
+    name: 🔨 Build on ${{ matrix.os }} (${{ matrix.runtime }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            runtime: linux-x64
+          - os: windows-latest
+            runtime: win-x64
+          - os: macos-latest
+            runtime: osx-x64
+
+    outputs:
+      artifact-name: ${{ steps.set-artifact-name.outputs.name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
+
+      - name: Build solution
+        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
+
+      - name: Publish application
+        run: dotnet publish ${{ env.HOST_PROJECT }} --configuration Release --runtime ${{ matrix.runtime }} --self-contained false --output ./publish/${{ matrix.runtime }}
+
+      - name: Set artifact name output
+        id: set-artifact-name
+        run: echo "name=payment-service-${{ matrix.runtime }}" >> $GITHUB_OUTPUT
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: payment-service-${{ matrix.runtime }}
+          path: ./publish/${{ matrix.runtime }}
+  
+  attest:
+    name: 🛡️ Attest Build Provenance
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./publish
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: ./publish
