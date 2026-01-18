@@ -6,33 +6,45 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+
     <ItemGroup>
-        <Protobuf Include="Features\WalletBalance\Contracts\**\*.proto"
-                  ProtoRoot="Features\WalletBalance\Contracts"
-                  GrpcServices="Both"
-                  Access="Public" />
+        <_AllProtoFiles Include="Features\**\*.proto" />
+        <_ProtoFolders Include="Features/WalletBalance/Contracts/" />
     </ItemGroup>
-    
+
+    <PropertyGroup>
+        <_ProtoDirList>@(_ProtoFolders, ';')</_ProtoDirList>
+    </PropertyGroup>
+
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.32.0" />
-        <PackageReference Include="Grpc.Core.Api" Version="2.71.0" />
+        <Protobuf Include="Features\**\*.proto" ProtoRoot="Features" GrpcServices="Both" Access="Public" AdditionalImportDirs="$(_ProtoDirList)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.33.4" />
+        <PackageReference Include="Grpc.Core.Api" Version="2.76.0" />
         <PackageReference Include="Grpc.Tools" Version="2.72.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Mapster" Version="10.0.0-pre01" />
         <PackageReference Include="ModularityKit.Context" Version="1.0.0-preview.1" />
         <PackageReference Include="ModularityKit.Context.AspNet" Version="1.0.0-preview.1" />
-        <PackageReference Include="WolverineFx" Version="5.9.1" />
+        <PackageReference Include="Ryzespace.Contracts.Shared" Version="1.0.1" />
+        <PackageReference Include="WolverineFx" Version="5.10.0" />
+        <PackageReference Include="WolverineFx.Marten" Version="5.10.0" />
     </ItemGroup>
-    
+
     <ItemGroup>
-      <Folder Include="Processors\Interfaces\" />
-      <Folder Include="Processors\Operations\" />
-      <Folder Include="Processors\Processor\" />
+        <Folder Include="Processors\Interfaces\" />
+        <Folder Include="Processors\Operations\" />
+        <Folder Include="Processors\Processor\" />
     </ItemGroup>
+
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
     </ItemGroup>
+
     <ItemGroup>
-      <ProjectReference Include="..\Ryze.Application\Ryze.Application.csproj" />
+        <ProjectReference Include="..\Ryze.Application\Ryze.Application.csproj" />
     </ItemGroup>
 </Project>
