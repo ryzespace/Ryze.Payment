@@ -1,4 +1,4 @@
-using Ryze.Domain.Exceptions;
+using Ryze.Domain.Features.Shared;
 using Ryze.Domain.Features.Wallet.ValueObject;
 
 namespace Ryze.Domain.Features.WalletBalance.Entity;

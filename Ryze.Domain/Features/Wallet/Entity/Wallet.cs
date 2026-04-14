@@ -1,4 +1,4 @@
-using Ryze.Domain.Exceptions;
+using Ryze.Domain.Features.Shared;
 using Ryze.Domain.Features.Shared.Enum;
 using Ryze.Domain.Features.Wallet.ValueObject;
 using Ryze.Domain.Features.Wallet.ValueObject.WalletOnwers.WalletVo;
