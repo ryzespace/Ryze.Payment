@@ -6,8 +6,36 @@ using RyzeSpace.Wallet.Contracts.V1;
 
 namespace Ryze.Infrastructure.Features.Wallet.Mapping;
 
+/// <summary>
+/// Configures Mapster mappings for wallet list (pagination) operations.
+/// </summary>
+/// <remarks>
+/// Handles conversion of paginated wallet queries and responses between:
+/// - gRPC request models<br/>
+/// - application list contexts<br/>
+/// - response DTOs and gRPC contracts<br/><br/>
+///
+/// Includes normalization of pagination parameters, optional filters,
+/// and safe handling of unspecified enum values.
+/// </remarks>
 public static class WalletListMapping
 {
+    /// <summary>
+    /// Registers Mapster configuration for wallet list requests and responses.
+    /// </summary>
+    /// <remarks>
+    /// Request mapping:
+    /// - Normalizes <c>PageSize</c> to default value (50) when invalid<br/>
+    /// - Converts empty strings to <see langword="null"/> for optional filters<br/>
+    /// - Translates <c>Unspecified</c> enums into nullable values<br/>
+    /// - Converts Protobuf timestamps into <see cref="DateTimeOffset"/>
+    /// <br/><br/>
+    ///
+    /// Response mapping:
+    /// - Maps wallet collections into gRPC contract types<br/>
+    /// - Ensures safe defaults for pagination metadata (e.g., <c>NextPageToken</c>)<br/>
+    /// - Preserves total count for client-side pagination
+    /// </remarks>
     public static void RegisterMappings()
     {
         TypeAdapterConfig<ListWalletsRequest, WalletListContext>
@@ -24,18 +52,18 @@ public static class WalletListMapping
                 src => src.CreatedBefore.ToDateTimeOffset());
 
         TypeAdapterConfig<ListWalletsResponseDto, ListWalletsResponse>
-                 .NewConfig()
-                 .AfterMapping((src, dest) =>
-                 {
-                     if (src.Wallets.Count > 0)
-                     {
-                         dest.Wallets.AddRange(
-                             src.Wallets.Adapt<RyzeSpace.Wallet.Contracts.V1.Wallet[]>()
-                         );
-                     }
+            .NewConfig()
+            .AfterMapping((src, dest) =>
+            {
+                if (src.Wallets.Count > 0)
+                {
+                    dest.Wallets.AddRange(
+                        src.Wallets.Adapt<RyzeSpace.Wallet.Contracts.V1.Wallet[]>()
+                    );
+                }
 
-                     dest.NextPageToken = src.NextPageToken ?? string.Empty;
-                     dest.TotalCount = src.TotalCount;
-                 });
+                dest.NextPageToken = src.NextPageToken ?? string.Empty;
+                dest.TotalCount = src.TotalCount;
+            });
     }
 }

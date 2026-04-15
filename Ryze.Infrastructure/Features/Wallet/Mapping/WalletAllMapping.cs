@@ -1,18 +1,44 @@
 using Google.Protobuf.WellKnownTypes;
 using Mapster;
-using Ryze.Application.Features.Shared.DTO;
+using Ryze.Application.Features.WalletBalance.DTO;
+using Ryze.Application.Features.Walllet.DTO;
 using Ryze.Application.Features.Walllet.DTO.Response;
 using RyzeSpace.Wallet.Contracts.V1;
 using Proto = Payment.Common.Grpc;
 
 namespace Ryze.Infrastructure.Features.Wallet.Mapping;
 
+/// <summary>
+/// Aggregates and registers all Mapster mappings used in the Wallet module.
+/// </summary>
+/// <remarks>
+/// Centralized mapping configuration for:
+/// - Wallet commands and queries<br/>
+/// - Wallet owners and balances<br/>
+/// - gRPC contract transformations<br/>
+/// - Shared value object conversions (Money, Address, Balance)<br/><br/>
+///
+/// This class acts as a composition root for Mapster configuration in the Wallet bounded context.
+/// It ensures all mappings are registered in a deterministic order before compilation.
+/// </remarks>
 public static class WalletAllMapping
 {
+    /// <summary>
+    /// Registers all Wallet-related Mapster mappings and compiles global configuration.
+    /// </summary>
+    /// <remarks>
+    /// Includes:
+    /// - Feature-level mappings (Wallet, Owner, Requests, Lists)<br/>
+    /// - Global type conversions (DTO ↔ gRPC contracts)<br/>
+    /// - Protobuf timestamp conversions<br/>
+    /// - Collection and metadata mapping strategies<br/><br/>
+    ///
+    /// Finally calls <see cref="TypeAdapterConfig.Compile()"/> to optimize mapping performance.
+    /// </remarks>
     public static void RegisterMappings()
     {
         WalletMapping.RegisterMappings();
-       // WalletRequestMapping.RegisterMappings();
+        WalletRequestMapping.RegisterMappings();
         WalletOwnerMapping.RegisterMappings();
         GetWalletMapping.RegisterMappings();
         WalletListMapping.RegisterMappings();
@@ -46,6 +72,7 @@ public static class WalletAllMapping
               .AfterMapping((src, dest) =>
               {
                   dest.Address = src.Address?.Adapt<Address>() ?? new Address();
+
                   if (src.Metadata != null)
                       foreach (var kvp in src.Metadata)
                           dest.Metadata[kvp.Key] = kvp.Value;
@@ -68,9 +95,16 @@ public static class WalletAllMapping
               .AfterMapping((src, dest) =>
               {
                   dest.Balance = src.Balance?.Adapt<Balance>() ?? new Balance();
-                  if (src.Owners != null) dest.Owners.AddRange(src.Owners.Adapt<WalletOwner[]>());
-                  if (src.Metadata != null) foreach (var kvp in src.Metadata) dest.Metadata[kvp.Key] = kvp.Value;
-                  if (src.Tags != null) dest.Tags.AddRange(src.Tags);
+
+                  if (src.Owners != null)
+                      dest.Owners.AddRange(src.Owners.Adapt<WalletOwner[]>());
+
+                  if (src.Metadata != null)
+                      foreach (var kvp in src.Metadata)
+                          dest.Metadata[kvp.Key] = kvp.Value;
+
+                  if (src.Tags != null)
+                      dest.Tags.AddRange(src.Tags);
               });
 
         global.NewConfig<GetWalletResponseDto, GetWalletResponse>()

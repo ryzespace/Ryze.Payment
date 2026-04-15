@@ -5,13 +5,26 @@ using RyzeSpace.Wallet.Contracts.V1;
 namespace Ryze.Infrastructure.Features.Wallet.Mapping;
 
 /// <summary>
-/// Configures Mapster mappings for <see cref="GetWalletRequest"/> to <see cref="WalletGetContext"/>.
+/// Configures Mapster mappings for wallet retrieval operations.
 /// </summary>
 /// <remarks>
-/// Ensures proper conversion of gRPC request types into domain context objects.
+/// Maps <see cref="GetWalletRequest"/> into <see cref="WalletGetContext"/>,
+/// ensuring proper identifier parsing and flag propagation
+/// for optional wallet data loading.
 /// </remarks>
 public static class GetWalletMapping
 {
+    /// <summary>
+    /// Registers Mapster configuration for mapping
+    /// <see cref="GetWalletRequest"/> to <see cref="WalletGetContext"/>.
+    /// </summary>
+    /// <remarks>
+    /// - Parses <c>WalletId</c> from string to <see cref="Guid"/>.<br/>
+    /// - Copies optional inclusion flags for balance, owners, and limits.
+    /// </remarks>
+    /// <exception cref="FormatException">
+    /// Thrown when <c>WalletId</c> is not a valid <see cref="Guid"/>.
+    /// </exception>
     public static void RegisterMappings()
     {
         TypeAdapterConfig<GetWalletRequest, WalletGetContext>
