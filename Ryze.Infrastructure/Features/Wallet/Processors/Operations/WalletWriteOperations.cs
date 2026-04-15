@@ -3,13 +3,12 @@ using Contracts.Shared.Grpc;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using ModularityKit.Context.Abstractions;
 using Ryze.Application.Features.Walllet.Contexts;
 using Ryze.Application.Features.Walllet.DTO.Response;
 using Ryze.Application.Features.Walllet.UseCase.Commands.Requests;
+using Ryze.Infrastructure.Features.Shared;
 using Ryze.Infrastructure.Features.Wallet.Mapping;
 using Ryze.Infrastructure.Features.Wallet.Processors.Interfaces;
-using Ryze.Infrastructure.Features.WalletBalance.Factory;
 using RyzeSpace.Wallet.Contracts.V1;
 using Wolverine;
 
@@ -30,9 +29,9 @@ public class WalletWriteOperations(IMessageBus bus, ILogger<WalletWriteOperation
     /// <summary>
     /// Creates a new wallet.
     /// </summary>
-    /// <param>The gRPC request containing wallet creation parameters.</param>
-    /// <param>The gRPC server call context.</param>
-    /// <returns>A with wallet ID, status, and creation timestamp.</returns>
+    /// <param name="request">The gRPC request containing wallet creation parameters.</param>
+    /// <param name="context">The gRPC server call context.</param>
+    /// <returns>A response with wallet ID, status, and creation timestamp.</returns>
     public async Task<CreateWalletResponse> CreateWallet(CreateWalletRequest request, ServerCallContext context)
     {
         logger.LogGrpcRequest("CreateWallet", request);
@@ -60,8 +59,8 @@ public class WalletWriteOperations(IMessageBus bus, ILogger<WalletWriteOperation
     /// <summary>
     /// Suspends an existing wallet.
     /// </summary>
-    /// <param>The gRPC request containing wallet ID, reason, and optional suspend-until timestamp.</param>
-    /// <param>The gRPC server call context.</param>
+    /// <param name="request">The gRPC request containing wallet ID, reason, and optional suspend-until timestamp.</param>
+    /// <param name="context">The gRPC server call context.</param>
     /// <returns>An empty response on success.</returns>
     public async Task<Empty> SuspendWallet(SuspendWalletRequest request, ServerCallContext context)
     {
@@ -69,7 +68,7 @@ public class WalletWriteOperations(IMessageBus bus, ILogger<WalletWriteOperation
 
         var requestCtx = RequestGrpcContextFactory.FromGrpc(context)
             .WithRequestType("SuspendWallet");
-        
+
         var suspendCtx = WalletStateChangeMapping.ToContext(request);
         var command = new SuspendWalletCommand(requestCtx, suspendCtx);
 
@@ -85,8 +84,8 @@ public class WalletWriteOperations(IMessageBus bus, ILogger<WalletWriteOperation
     /// <summary>
     /// Reactivates suspended wallet.
     /// </summary>
-    /// <param>The gRPC request containing wallet ID and reason for reactivation.</param>
-    /// <param>The gRPC server call context.</param>
+    /// <param name="request">The gRPC request containing wallet ID and reason for reactivation.</param>
+    /// <param name="context">The gRPC server call context.</param>
     /// <returns>An empty response on success.</returns>
     public async Task<Empty> ReactivateWallet(ReactivateWalletRequest request, ServerCallContext context)
     {

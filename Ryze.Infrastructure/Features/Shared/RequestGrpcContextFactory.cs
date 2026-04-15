@@ -1,7 +1,8 @@
-﻿using Grpc.Core;
+using Grpc.Core;
 using Ryze.Domain.Features.WalletBalance.Contexts;
+using Ryze.Infrastructure.Features.WalletBalance;
 
-namespace Ryze.Infrastructure.Features.WalletBalance.Factory;
+namespace Ryze.Infrastructure.Features.Shared;
 
 /// <summary>
 /// Factory for creating <see cref="RequestContext"/> instances from gRPC request data.
@@ -25,6 +26,7 @@ public static class RequestGrpcContextFactory
         RequestContext.Create(
             tenantId: GrpcHeaderParser.RequiredGuid(ctx, "x-tenant-id"),
             userId: GrpcHeaderParser.RequiredGuid(ctx, "x-user-id"),
+            idempotencyKey: GrpcHeaderParser.RequiredGuid(ctx, "x-idempotency-key"),
             correlationId: GrpcHeaderParser.RequiredString(ctx, "x-correlation-id")
         );
 }

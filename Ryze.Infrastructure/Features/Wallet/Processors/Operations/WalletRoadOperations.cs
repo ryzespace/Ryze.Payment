@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Ryze.Application.Features.Walllet.Contexts.Getters;
 using Ryze.Application.Features.Walllet.DTO.Response;
 using Ryze.Application.Features.Walllet.UseCase.Queries.Requests;
+using Ryze.Infrastructure.Features.Shared;
 using Ryze.Infrastructure.Features.Wallet.Processors.Interfaces;
 using Ryze.Infrastructure.Features.WalletBalance.Factory;
 using RyzeSpace.Wallet.Contracts.V1;
@@ -16,7 +17,7 @@ using ProtoWallet = RyzeSpace.Wallet.Contracts.V1.Wallet;
 namespace Ryze.Infrastructure.Features.Wallet.Processors.Operations;
 
 /// <summary>
-/// Implements read only gRPC operations for Wallets.
+/// Implements read-only gRPC operations for Wallets.
 /// </summary>
 /// <remarks>
 /// Handles retrieval of a single wallet or list of wallets using domain contexts
@@ -27,9 +28,9 @@ public class WalletRoadOperations(IMessageBus bus, ILogger<WalletRoadOperations>
     /// <summary>
     /// Retrieves wallet by its identifier.
     /// </summary>
-    /// <param>The gRPC request containing wallet identification.</param>
-    /// <param>The gRPC server call context.</param>
-    /// <returns>A containing the wallet data.</returns>
+    /// <param name="request">The gRPC request containing wallet identification.</param>
+    /// <param name="context">The gRPC server call context.</param>
+    /// <returns>A response containing the wallet data.</returns>
     public async Task<GetWalletResponse> GetWallet(GetWalletRequest request, ServerCallContext context)
     {
         logger.LogGrpcRequest("GetWallet", request);
@@ -51,9 +52,9 @@ public class WalletRoadOperations(IMessageBus bus, ILogger<WalletRoadOperations>
     /// <summary>
     /// Retrieves list of wallets.
     /// </summary>
-    /// <param>The gRPC request containing filtering or pagination parameters.</param>
-    /// <param>The gRPC server call context.</param>
-    /// <returns>A containing wallet summaries.</returns>
+    /// <param name="request">The gRPC request containing filtering or pagination parameters.</param>
+    /// <param name="context">The gRPC server call context.</param>
+    /// <returns>A response containing wallet summaries.</returns>
     public async Task<ListWalletsResponse> ListWallets(ListWalletsRequest request, ServerCallContext context)
     {
         logger.LogGrpcRequest("ListWallets", request);
