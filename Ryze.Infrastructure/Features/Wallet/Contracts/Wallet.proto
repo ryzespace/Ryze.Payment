@@ -2,8 +2,7 @@ syntax = "proto3";
 
 package ryzespace.wallet.v1;
 
-//import "Enum.proto";
-import "Wallet/Contracts/Enum.proto";
+import "Enum.proto";
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
