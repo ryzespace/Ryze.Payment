@@ -1,3 +1,4 @@
+using Google.Protobuf.WellKnownTypes;
 using Mapster;
 using Payment.Common.Grpc;
 using Ryze.Application.Features.Walllet.Contexts.Getters;
@@ -46,10 +47,8 @@ public static class WalletListMapping
             .Map(dest => dest.Status, src => src.Status == WalletStatus.Unspecified ? (WalletStatus?)null : src.Status)
             .Map(dest => dest.WalletType, src => src.WalletType == WalletType.Unspecified ? (WalletType?)null : src.WalletType)
             .Map(dest => dest.Tags, src => src.Tags)
-            .Map(dest => dest.CreatedAfter,
-                src => src.CreatedAfter.ToDateTimeOffset())
-            .Map(dest => dest.CreatedBefore,
-                src => src.CreatedBefore.ToDateTimeOffset());
+            .Map(dest => dest.CreatedAfter, src => NormalizeTimestamp(src.CreatedAfter))
+            .Map(dest => dest.CreatedBefore, src => NormalizeTimestamp(src.CreatedBefore));
 
         TypeAdapterConfig<ListWalletsResponseDto, ListWalletsResponse>
             .NewConfig()
@@ -65,5 +64,22 @@ public static class WalletListMapping
                 dest.NextPageToken = src.NextPageToken ?? string.Empty;
                 dest.TotalCount = src.TotalCount;
             });
+    }
+
+    /// <summary>
+    /// Converts a gRPC <see cref="Timestamp"/> into a nullable <see cref="DateTimeOffset"/>.
+    /// </summary>
+    /// <remarks>
+    /// A missing (<c>null</c>) or default (year 0001) timestamp is treated as "no filter"
+    /// so callers that omit the field (or send a zero value) do not accidentally exclude
+    /// every document created after the Unix epoch.
+    /// </remarks>
+    private static DateTimeOffset? NormalizeTimestamp(Timestamp? timestamp)
+    {
+        if (timestamp is null)
+            return null;
+
+        var value = timestamp.ToDateTimeOffset();
+        return value.Year <= 1 ? null : value;
     }
 }

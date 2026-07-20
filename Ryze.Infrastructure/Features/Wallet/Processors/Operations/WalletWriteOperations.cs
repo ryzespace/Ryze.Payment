@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 using Ryze.Application.Features.Walllet.Contexts;
 using Ryze.Application.Features.Walllet.DTO.Response;
 using Ryze.Application.Features.Walllet.UseCase.Commands.Requests;
-using Ryze.Infrastructure.Features.Shared;
 using Ryze.Infrastructure.Features.Wallet.Mapping;
 using Ryze.Infrastructure.Features.Wallet.Processors.Interfaces;
+using Ryze.Infrastructure.Shared;
 using RyzeSpace.Wallet.Contracts.V1;
 using Wolverine;
 

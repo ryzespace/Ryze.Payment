@@ -1,8 +1,8 @@
 using Mapster;
 using Ryze.Application.Features.Walllet.Contexts;
-using Ryze.Domain.Features.Shared.Enum;
+using Ryze.Domain.Shared.Enum;
 using RyzeSpace.Wallet.Contracts.V1;
-using WalletTypeDomain = Ryze.Domain.Features.Shared.Enum.WalletType;
+using WalletTypeDomain = Ryze.Domain.Shared.Enum.WalletType;
 
 namespace Ryze.Infrastructure.Features.Wallet.Mapping;
 

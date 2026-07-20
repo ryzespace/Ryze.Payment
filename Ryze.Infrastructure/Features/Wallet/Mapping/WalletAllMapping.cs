@@ -2,7 +2,9 @@ using Google.Protobuf.WellKnownTypes;
 using Mapster;
 using Ryze.Application.Features.WalletBalance.DTO;
 using Ryze.Application.Features.Walllet.DTO;
+using Ryze.Application.Features.Walllet.Mapping;
 using Ryze.Application.Features.Walllet.DTO.Response;
+using Ryze.Infrastructure.Features.WalletBalance.Mapping;
 using RyzeSpace.Wallet.Contracts.V1;
 using Proto = Payment.Common.Grpc;
 
@@ -42,6 +44,8 @@ public static class WalletAllMapping
         WalletOwnerMapping.RegisterMappings();
         GetWalletMapping.RegisterMappings();
         WalletListMapping.RegisterMappings();
+        WalletQueryMapping.RegisterMappings();
+        WalletBalanceMapping.RegisterMappings();
 
         var global = TypeAdapterConfig.GlobalSettings;
 
@@ -49,12 +53,12 @@ public static class WalletAllMapping
               .MapWith(src => src.HasValue ? Timestamp.FromDateTime(src.Value.UtcDateTime) : null);
 
         global.NewConfig<AddressDto, Address>()
-              .Map(dest => dest.StreetLine1, src => src.Street ?? string.Empty)
+              .Map(dest => dest.StreetLine1, src => src.Street)
               .Map(dest => dest.StreetLine2, src => src.StreetTwo ?? string.Empty)
-              .Map(dest => dest.City, src => src.City ?? string.Empty)
+              .Map(dest => dest.City, src => src.City)
               .Map(dest => dest.StateProvince, src => src.State ?? string.Empty)
-              .Map(dest => dest.PostalCode, src => src.PostalCode ?? string.Empty)
-              .Map(dest => dest.CountryCode, src => src.Country ?? string.Empty);
+              .Map(dest => dest.PostalCode, src => src.PostalCode)
+              .Map(dest => dest.CountryCode, src => src.Country);
 
         global.NewConfig<MoneyDto, Money>()
               .Map(dest => dest.Currency, src => (Proto.Currency)src.Currency);
@@ -62,7 +66,7 @@ public static class WalletAllMapping
         global.NewConfig<BalanceDto, Balance>();
 
         global.NewConfig<WalletOwnerDto, WalletOwner>()
-              .Map(dest => dest.OwnerId, src => src.OwnerId ?? string.Empty)
+              .Map(dest => dest.OwnerId, src => src.OwnerId)
               .Map(dest => dest.NationalId, src => src.NationalId ?? string.Empty)
               .Map(dest => dest.Role, src => (Proto.OwnerRole)src.Role)
               .Map(dest => dest.DateOfBirth, src => src.DateOfBirth.HasValue
@@ -79,7 +83,7 @@ public static class WalletAllMapping
               });
 
         global.NewConfig<WalletDto, RyzeSpace.Wallet.Contracts.V1.Wallet>()
-              .Map(dest => dest.WalletId, src => src.WalletId ?? string.Empty)
+              .Map(dest => dest.WalletId, src => src.WalletId)
               .Map(dest => dest.AccountNumber, src => src.AccountNumber ?? string.Empty)
               .Map(dest => dest.RoutingNumber, src => src.RoutingNumber ?? string.Empty)
               .Map(dest => dest.WalletType, src => (Proto.WalletType)src.WalletType)
@@ -94,7 +98,8 @@ public static class WalletAllMapping
                   : null)
               .AfterMapping((src, dest) =>
               {
-                  dest.Balance = src.Balance?.Adapt<Balance>() ?? new Balance();
+                  if (src.Balance != null)
+                      dest.Balance = src.Balance.Adapt<Balance>();
 
                   if (src.Owners != null)
                       dest.Owners.AddRange(src.Owners.Adapt<WalletOwner[]>());
