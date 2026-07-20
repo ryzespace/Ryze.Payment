@@ -141,7 +141,7 @@ public sealed partial class LedgerTransactionBuilder
     public LedgerTransactionBuilder AddCredit(
         LedgerAccount account,
         decimal amount,
-        string currency,
+        Currency currency,
         string description,
         Dictionary<string, string>? metadata = null,
         EntryStatus status = EntryStatus.Cleared)
@@ -173,7 +173,7 @@ public sealed partial class LedgerTransactionBuilder
         string accountId,
         string accountType,
         decimal amount,
-        string currency,
+        Currency currency,
         string description,
         Action<MetadataBuilder> metadataConfig)
     {
@@ -203,7 +203,7 @@ public sealed partial class LedgerTransactionBuilder
         string accountId,
         string accountType,
         decimal amount,
-        string currency,
+        Currency currency,
         string description,
         Action<MetadataBuilder> metadataConfig)
     {
@@ -231,7 +231,7 @@ public sealed partial class LedgerTransactionBuilder
     public LedgerTransactionBuilder AddDebit(
         LedgerAccount account,
         decimal amount,
-        string currency,
+        Currency currency,
         string description,
         Action<MetadataBuilder> metadataConfig)
     {
@@ -258,7 +258,7 @@ public sealed partial class LedgerTransactionBuilder
     public LedgerTransactionBuilder AddCredit(
         LedgerAccount account,
         decimal amount,
-        string currency,
+        Currency currency,
         string description,
         Action<MetadataBuilder> metadataConfig)
     {

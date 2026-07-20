@@ -1,5 +1,7 @@
 using Ryze.Domain.Features.Ledger.Entity;
 using Ryze.Domain.Features.Ledger.Enum;
+using Ryze.Domain.Features.Ledger.ValueObject;
+using Ryze.Domain.Shared.Enum;
 
 namespace Ryze.Application.Features.Ledger.Builders;
 
@@ -109,7 +111,7 @@ public sealed partial class LedgerTransactionBuilder
         LedgerAccount account,
         EntryType entryType,
         decimal amount,
-        string currency,
+        Currency currency,
         string description,
         Dictionary<string, string>? metadata,
         EntryStatus status)
@@ -122,19 +124,10 @@ public sealed partial class LedgerTransactionBuilder
             Id = Guid.NewGuid(),
             TransactionId = TransactionId,
             Timestamp = _timestamp,
-            AccountId = account.Id,
-            AccountType = account.AccountType,
-            Type = entryType,
-            Amount = amount,
-            Currency = currency,
-            RunningBalance = 0,
-            Description = description,
-            TransactionType = _type,
-            InitiatedBy = _initiatedBy,
-            Reason = _reason,
-            IdempotencyKey = _idempotencyKey,
-            Metadata = metadata,
-            Status = status
+            Account = new LedgerAccountReference(account.Id, account.AccountType),
+            Posting = new LedgerPosting(entryType, amount, currency, 0, status, description),
+            Audit = new EntryAudit(_type, _initiatedBy, _reason, _idempotencyKey),
+            Metadata = metadata
         };
     }
 

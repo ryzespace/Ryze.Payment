@@ -1,5 +1,7 @@
 using Ryze.Domain.Features.Ledger.Entity;
 using Ryze.Domain.Features.Ledger.Enum;
+using Ryze.Domain.Shared.Enum;
+using ChartOfAccounts = Ryze.Domain.Features.Ledger.Entity.ChartsAccounts.ChartOfAccounts;
 
 namespace Ryze.Application.Features.Ledger.Builders;
 
@@ -22,7 +24,7 @@ public sealed partial class LedgerOperationBuilder
         string fromAccountId,
         string toAccountId,
         decimal amount,
-        string currency,
+        Currency currency,
         string description = "Internal Transfer")
     {
         _builder.AddDebit(fromAccountId, "internal", amount, currency, description, _ => { })
@@ -48,7 +50,7 @@ public sealed partial class LedgerOperationBuilder
         string toAccountId,
         string gateway,
         decimal amount,
-        string currency,
+        Currency currency,
         string description = "Deposit")
     {
         _builder.AddDebit($"gateway:{gateway}", "gateway", amount, currency,
@@ -72,7 +74,7 @@ public sealed partial class LedgerOperationBuilder
         string fromAccountId,
         string feeType,
         decimal amount,
-        string currency,
+        Currency currency,
         string description = "Platform Fee")
     {
         _builder.AddDebit(fromAccountId, "user_wallet", amount, currency, 
@@ -105,7 +107,7 @@ public sealed partial class LedgerOperationBuilder
         string accountId,
         string adjustmentType,
         decimal amount,
-        string currency,
+        Currency currency,
         bool isEncumbrance = false,
         string description = "Ledger Adjustment")
     {
@@ -144,7 +146,7 @@ public sealed partial class LedgerOperationBuilder
         string fromAccountId,
         string destination,
         decimal amount,
-        string currency,
+        Currency currency,
         string description = "Withdrawal")
     {
         _builder.AddDebit(fromAccountId, "user_wallet", amount, currency, description, _ => { })
@@ -169,7 +171,7 @@ public sealed partial class LedgerOperationBuilder
     public LedgerOperationBuilder EscrowHold(
         string fromAccountId,
         decimal amount,
-        string currency,
+        Currency currency,
         string description = "Funds Hold")
     {
         _builder.AddDebit(fromAccountId, "user_wallet", amount, currency, description, _ => { })
@@ -189,7 +191,7 @@ public sealed partial class LedgerOperationBuilder
     public LedgerOperationBuilder EscrowRelease(
         string toAccountId,
         decimal amount,
-        string currency,
+        Currency currency,
         string description = "Funds Release")
     {
         _builder.AddDebit(ChartOfAccounts.EscrowFunds, amount, currency, description, _ => { })
@@ -208,9 +210,9 @@ public sealed partial class LedgerOperationBuilder
     public LedgerOperationBuilder CurrencyExchange(
         string accountId,
         decimal fromAmount,
-        string fromCurrency,
+        Currency fromCurrency,
         decimal toAmount,
-        string toCurrency,
+        Currency toCurrency,
         string description = "Currency Exchange")
     {
         _builder.AddDebit(accountId, "user_wallet", fromAmount, fromCurrency, description, _ => { })
@@ -245,7 +247,7 @@ public sealed partial class LedgerOperationBuilder
     public LedgerOperationBuilder SplitTransfer(
         string fromAccountId,
         decimal totalAmount,
-        string currency,
+        Currency currency,
         List<(string toAccountId, decimal amount, string description)> distributions)
     {
         _builder.AddDebit(fromAccountId,
@@ -277,7 +279,7 @@ public sealed partial class LedgerOperationBuilder
     /// </remarks>
     public LedgerOperationBuilder RecognizeRevenue(
         decimal amount,
-        string currency,
+        Currency currency,
         string feeType,
         string description = "Revenue Recognition")
     {
@@ -303,7 +305,7 @@ public sealed partial class LedgerOperationBuilder
         string fromAccountId,
         string toAccountId,
         decimal amount,
-        string currency,
+        Currency currency,
         string description = "Refund")
     {
         _builder.AddDebit(toAccountId,
@@ -331,7 +333,7 @@ public sealed partial class LedgerOperationBuilder
     public LedgerOperationBuilder AuthorizeHold(
         string accountId,
         decimal amount,
-        string currency,
+        Currency currency,
         string description = "Auth Hold")
     {
         _builder.AddDebit(accountId,
@@ -356,7 +358,7 @@ public sealed partial class LedgerOperationBuilder
         string originalHoldId,
         string toAccountId,
         decimal amount,
-        string currency,
+        Currency currency,
         string description = "Capture Hold")
     {
         _builder.AddDebit(ChartOfAccounts.EscrowFunds, 
@@ -381,7 +383,7 @@ public sealed partial class LedgerOperationBuilder
         string originalHoldId,
         string accountId,
         decimal amount,
-        string currency,
+        Currency currency,
         string description = "Cancel Hold")
     {
         _builder.AddDebit(ChartOfAccounts.EscrowFunds, 
@@ -407,7 +409,7 @@ public sealed partial class LedgerOperationBuilder
         string destination,
         decimal amount,
         decimal feeAmount,
-        string currency,
+        Currency currency,
         string feeType,
         string description = "Payout with Fee")
     {
