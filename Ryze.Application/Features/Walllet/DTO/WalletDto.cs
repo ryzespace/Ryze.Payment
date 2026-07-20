@@ -1,5 +1,5 @@
 using Ryze.Application.Features.WalletBalance.DTO;
-using Ryze.Domain.Features.Shared.Enum;
+using Ryze.Domain.Shared.Enum;
 
 namespace Ryze.Application.Features.Walllet.DTO;
 
@@ -26,12 +26,12 @@ public sealed class WalletDto
     /// <summary>
     /// List of wallet owners associated with this wallet.
     /// </summary>
-    public IReadOnlyList<WalletOwnerDto>? Owners { get; init; }
+    public IReadOnlyList<WalletOwnerDto>? Owners { get; set; }
 
     /// <summary>
     /// Optional balance information of the wallet.
     /// </summary>
-    public BalanceDto? Balance { get; init; }
+    public BalanceDto? Balance { get; set; }
 
     /// <summary>
     /// Type of the wallet (e.g., personal, business).

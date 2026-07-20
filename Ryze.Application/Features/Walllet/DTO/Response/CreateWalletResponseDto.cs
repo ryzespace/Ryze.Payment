@@ -1,4 +1,4 @@
-using Ryze.Domain.Features.Shared.Enum;
+using Ryze.Domain.Shared.Enum;
 
 namespace Ryze.Application.Features.Walllet.DTO.Response;
 
@@ -9,7 +9,7 @@ namespace Ryze.Application.Features.Walllet.DTO.Response;
 /// <list type="bullet">
 /// <item>Represents the canonical API payload for the create-wallet use case.</item>
 /// <item>Contains immutable identity data for the newly created wallet.</item>
-/// <item>Includes lifecycle metadata that can be used by clients for optimistic UI updates.</item>
+/// <item>Includes lifecycle metadata that clients can use for optimistic UI updates.</item>
 /// </list>
 /// </remarks>
 public class CreateWalletResponseDto

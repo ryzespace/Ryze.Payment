@@ -1,8 +1,7 @@
 using Ryze.Domain.Features.Wallet.Entity;
 using Ryze.Application.Features.Walllet.Contexts;
 using Ryze.Domain.Features.Wallet.ValueObject;
-using Ryze.Domain.Features.WalletBalance.Factory;
-
+    
 namespace Ryze.Application.Features.Walllet.Factory;
 
 /// <summary>
@@ -12,7 +11,7 @@ namespace Ryze.Application.Features.Walllet.Factory;
 /// <list type="bullet">
 /// <item>Creates owner entities from <see cref="WalletCreationContext.Owners"/> entries.</item>
 /// <item>Generates account and routing numbers via <see cref="WalletNumberGenerator"/>.</item>
-/// <item>Initializes wallet metadata, tags, and zero balance in the requested currency.</item>
+/// <item>Initializes wallet metadata, tags, and balance (optionally with initial funds).</item>
 /// </list>
 /// </remarks>
 public static class WalletFactory
@@ -45,8 +44,6 @@ public static class WalletFactory
             routingNumber: routingNumber,
             tags: new Tags(context.Tags)
         );
-
-        wallet.Balance = WalletBalanceFactory.CreateZeroBalance(context.CurrencyCode);
         return wallet;
     }
 }

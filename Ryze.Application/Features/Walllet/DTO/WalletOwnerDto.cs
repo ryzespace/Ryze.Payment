@@ -1,4 +1,4 @@
-using Ryze.Domain.Features.Shared.Enum;
+using Ryze.Domain.Shared.Enum;
 
 namespace Ryze.Application.Features.Walllet.DTO;
 
@@ -26,7 +26,7 @@ public sealed class WalletOwnerDto
     /// <summary>
     /// Optional address information of the wallet owner.
     /// </summary>
-    public AddressDto? Address { get; init; }
+    public AddressDto? Address { get; set; }
 
     /// <summary>
     /// Optional date of birth of the wallet owner.

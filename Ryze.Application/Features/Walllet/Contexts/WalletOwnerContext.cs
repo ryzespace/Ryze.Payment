@@ -1,60 +1,83 @@
 using ModularityKit.Context.Abstractions;
 using Ryze.Application.Features.Walllet.DTO;
-using Ryze.Domain.Features.Shared.Enum;
+using Ryze.Domain.Shared.Enum;
 
 namespace Ryze.Application.Features.Walllet.Contexts;
 
 /// <summary>
-/// Write context representing a wallet owner definition.
+/// Context describing a wallet owner definition during wallet operations.
 /// </summary>
 /// <remarks>
-/// Describes ownership, role, and identity attributes assigned
-/// to a wallet owner at creation or update time.
+/// Represents ownership data required when creating or modifying wallet
+/// ownership information.
+///
+/// The context captures identity attributes, ownership role, address data,
+/// compliance-related information, and additional metadata. It is consumed
+/// by wallet creation and mutation workflows to construct or update the
+/// corresponding domain owner entity.
 /// </remarks>
 public sealed class WalletOwnerContext : IContext
 {
     /// <summary>
-    /// Unique identifier of the owner context.
+    /// Unique identifier of this owner context instance.
     /// </summary>
+    /// <remarks>
+    /// Used for correlation and diagnostics within the wallet operation pipeline.
+    /// </remarks>
     public string Id { get; init; } = Guid.NewGuid().ToString("N");
 
     /// <summary>
-    /// Timestamp of context creation.
+    /// UTC timestamp when this owner context was created.
     /// </summary>
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 
     /// <summary>
-    /// Identifier of the owner (user, organization, or external entity).
+    /// Identifier of the owner entity.
     /// </summary>
+    /// <remarks>
+    /// Can represent a user, organization, or external identity provider subject
+    /// depending on the wallet ownership model.
+    /// </remarks>
     public required string OwnerId { get; init; }
 
     /// <summary>
-    /// Human-readable display name of the owner.
+    /// Human-readable name used for display and identification purposes.
     /// </summary>
     public string DisplayName { get; init; }
 
     /// <summary>
-    /// Role of the owner within the wallet.
+    /// Defines the owner's permissions and responsibility within the wallet.
     /// </summary>
     public required OwnerRole Role { get; init; }
 
     /// <summary>
-    /// Address information associated with the owner.
+    /// Postal address associated with the wallet owner.
     /// </summary>
+    /// <remarks>
+    /// The address is provided as an application DTO and is transformed into
+    /// the corresponding domain representation during the wallet workflow.
+    /// </remarks>
     public required AddressDto Address { get; init; }
 
     /// <summary>
-    /// Optional date of birth for identity verification.
+    /// Optional date of birth used for identity verification workflows.
     /// </summary>
     public DateTime? DateOfBirth { get; init; }
 
     /// <summary>
-    /// Optional national identifier for compliance purposes.
+    /// Optional government-issued identifier used for compliance checks.
     /// </summary>
+    /// <remarks>
+    /// Handling and storage requirements depend on the active compliance policy.
+    /// </remarks>
     public string? NationalId { get; init; }
 
     /// <summary>
-    /// Arbitrary metadata associated with the wallet owner.
+    /// Additional owner-specific metadata.
     /// </summary>
+    /// <remarks>
+    /// Contains extensible attributes that do not belong to the core owner
+    /// identity model.
+    /// </remarks>
     public Dictionary<string, string> Metadata { get; init; } = new();
 }
