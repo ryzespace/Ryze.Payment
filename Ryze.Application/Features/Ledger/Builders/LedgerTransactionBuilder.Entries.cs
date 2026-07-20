@@ -1,5 +1,6 @@
 using Ryze.Domain.Features.Ledger.Entity;
 using Ryze.Domain.Features.Ledger.Enum;
+using Ryze.Domain.Shared.Enum;
 
 namespace Ryze.Application.Features.Ledger.Builders;
 
@@ -40,7 +41,7 @@ public sealed partial class LedgerTransactionBuilder
     public LedgerTransactionBuilder AddDebit(
         string accountId,
         decimal amount,
-        string currency,
+        Currency currency,
         string description,
         string accountType = "unknown",
         Dictionary<string, string>? metadata = null,
@@ -77,7 +78,7 @@ public sealed partial class LedgerTransactionBuilder
     public LedgerTransactionBuilder AddCredit(
         string accountId,
         decimal amount,
-        string currency,
+        Currency currency,
         string description,
         string accountType = "unknown",
         Dictionary<string, string>? metadata = null,
@@ -109,7 +110,7 @@ public sealed partial class LedgerTransactionBuilder
     public LedgerTransactionBuilder AddDebit(
         LedgerAccount account,
         decimal amount,
-        string currency,
+        Currency currency,
         string description,
         Dictionary<string, string>? metadata = null,
         EntryStatus status = EntryStatus.Cleared)
