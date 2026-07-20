@@ -1,0 +1,42 @@
+services:
+  payment:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payment
+    restart: unless-stopped
+    ports:
+      - "5002:8080"
+    depends_on:
+      - Payment-db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=Payment-db;Port=5432;Database=Payment;Username=postgres;Password=postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - db_net
+
+  Payment-db:
+    image: postgres:15
+    container_name: Payment-db
+    environment:
+      POSTGRES_DB: Payment
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - Payment-data:/var/lib/postgresql/data
+    networks:
+      - db_net
+
+volumes:
+  Payment-data:
+
+networks:
+  db_net:
+    driver: bridge

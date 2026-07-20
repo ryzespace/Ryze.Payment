@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+package ryzespace.wallet.v1;
+
+import "Enum.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "RyzeSpace.Wallet.Contracts.V1";
+
+service Wallets {
+  rpc CreateWallet(CreateWalletRequest) returns (CreateWalletResponse);
+  rpc GetWallet(GetWalletRequest) returns (GetWalletResponse);
+  rpc ListWallets(ListWalletsRequest) returns (ListWalletsResponse);
+  rpc SuspendWallet(SuspendWalletRequest) returns (google.protobuf.Empty);
+  rpc ReactivateWallet(ReactivateWalletRequest) returns (google.protobuf.Empty);
+}
+
+message WalletOwner {
+  string owner_id = 1;
+  payment.models.v1.OwnerRole role = 2;
+  Address address = 3;
+  google.protobuf.Timestamp date_of_birth = 4;
+  string national_id = 5;
+  google.protobuf.Timestamp added_at = 6;
+  map<string, string> metadata = 7;
+}
+
+message Address {
+  string street_line1 = 1;
+  string street_line2 = 2;
+  string city = 3;
+  string state_province = 4;
+  string postal_code = 5;
+  string country_code = 6;
+}
+
+message Money {
+  double amount = 1;
+  payment.models.v1.Currency currency = 2;
+  int32 precision = 3;
+}
+
+message Balance {
+  Money available_balance = 1;
+  Money current_balance = 2;
+  Money frozen_balance = 3;
+  Money pending_balance = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message Wallet {
+  string wallet_id = 1;
+  repeated WalletOwner owners = 2;
+  Balance balance = 3;
+  payment.models.v1.WalletType wallet_type = 4;
+  payment.models.v1.Currency currency = 5;
+  payment.models.v1.WalletStatus status = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  google.protobuf.Timestamp closed_at = 9;
+  map<string, string> metadata = 10;
+  string account_number = 11;
+  string routing_number = 12;
+  repeated string tags = 13;
+}
+
+// Requests
+message CreateWalletRequest {
+  repeated WalletOwner owners = 1;
+  string wallet_type = 2;
+  payment.models.v1.Currency currency = 3;
+  map<string, string> metadata = 4;
+  repeated string tags = 5;
+}
+
+message GetWalletRequest {
+  string wallet_id = 1;
+  bool include_balance = 2;
+  bool include_owners = 3;
+  bool include_limits = 4;
+}
+
+message ListWalletsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  string owner_id = 3;
+  payment.models.v1.WalletStatus status = 4;
+  payment.models.v1.WalletType wallet_type = 5;
+  repeated string tags = 6;
+  google.protobuf.Timestamp created_after = 7;
+  google.protobuf.Timestamp created_before = 8;
+}
+
+message SuspendWalletRequest {
+  string wallet_id = 1;
+  string reason = 2;
+}
+
+message ReactivateWalletRequest {
+  string wallet_id = 1;
+  string reason = 2;
+}
+
+// Response
+message CreateWalletResponse {
+  string wallet_id = 1;
+  payment.models.v1.WalletStatus status = 2;
+  google.protobuf.Timestamp created_at = 3;
+}
+
+message GetWalletResponse {
+  Wallet wallet = 1;
+}
+
+message ListWalletsResponse {
+  repeated Wallet wallets = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
