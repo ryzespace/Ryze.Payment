@@ -1,7 +1,7 @@
-using Ryze.Domain.Features.Shared;
-using Ryze.Domain.Features.Shared.Enum;
 using Ryze.Domain.Features.Wallet.ValueObject;
 using Ryze.Domain.Features.Wallet.ValueObject.WalletOnwers.WalletVo;
+using Ryze.Domain.Shared;
+using Ryze.Domain.Shared.Enum;
 
 namespace Ryze.Domain.Features.Wallet.Entity;
 
@@ -40,12 +40,7 @@ public sealed class Wallet
     /// Wallet owners associated with this aggregate.
     /// </summary>
     public IReadOnlyCollection<WalletOwner> Owners => _owners;
-
-    /// <summary>
-    /// Current wallet balance snapshot.
-    /// </summary>
-    public WalletBalance.Entity.WalletBalance Balance { get; set; } = null!;
-
+    
     /// <summary>
     /// Arbitrary wallet metadata key-value collection.
     /// </summary>
@@ -97,7 +92,7 @@ public sealed class Wallet
         Guid id,
         WalletType type,
         Currency currency,
-        IEnumerable<WalletOwner> owners,
+        IReadOnlyCollection<WalletOwner> owners,
         AccountNumber? accountNumber = null,
         RoutingNumber? routingNumber = null,
         Metadata? metadata = null,
@@ -169,4 +164,5 @@ public sealed class Wallet
 
         Metadata = Metadata.With("closeReason", reason);
     }
+
 }

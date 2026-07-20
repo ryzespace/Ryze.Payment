@@ -53,7 +53,8 @@ public sealed class Metadata : IEquatable<Metadata>
     /// into an immutable structure.
     /// </para>
     /// </remarks>
-    public Metadata(IDictionary<string, string>? values)
+    [System.Text.Json.Serialization.JsonConstructor]
+    public Metadata(IReadOnlyDictionary<string, string>? values)
     {
         if (values == null || values.Count == 0)
         {

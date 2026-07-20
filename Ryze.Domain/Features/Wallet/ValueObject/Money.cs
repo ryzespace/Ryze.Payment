@@ -1,5 +1,5 @@
-using Ryze.Domain.Features.Shared;
-using Ryze.Domain.Features.Shared.Enum;
+using Ryze.Domain.Shared;
+using Ryze.Domain.Shared.Enum;
 
 namespace Ryze.Domain.Features.Wallet.ValueObject;
 

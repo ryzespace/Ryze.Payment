@@ -1,6 +1,6 @@
-using Ryze.Domain.Features.Shared.Enum;
 using Ryze.Domain.Features.Wallet.ValueObject;
 using Ryze.Domain.Features.Wallet.ValueObject.WalletOnwers.WalletVo;
+using Ryze.Domain.Shared.Enum;
 
 namespace Ryze.Domain.Features.Wallet.Entity;
 

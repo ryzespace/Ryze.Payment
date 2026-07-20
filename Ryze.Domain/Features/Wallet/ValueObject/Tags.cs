@@ -31,15 +31,16 @@ public sealed class Tags : IEquatable<Tags>
     /// Null input results in an empty tag set.
     /// Invalid or whitespace-only values are ignored.
     /// </remarks>
-    public Tags(IEnumerable<string>? tags)
+    [System.Text.Json.Serialization.JsonConstructor]
+    public Tags(IReadOnlyCollection<string>? values)
     {
-        if (tags is null)
+        if (values is null)
         {
             _values = ImmutableHashSet<string>.Empty;
             return;
         }
 
-        _values = tags
+        _values = values
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .Select(Normalize)
             .ToImmutableHashSet();
