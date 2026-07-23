@@ -1,4 +1,4 @@
-namespace Ryze.Infrastructure.Shared.Locking;
+namespace Ryze.Infrastructure.Shared.Locking.InMemory;
 
 /// <summary>
 /// Reference counted entry backing a single logical lock key.
