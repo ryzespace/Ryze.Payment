@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using Ryze.Application.Features.Ledger.Interfaces.Helpers;
 using Ryze.Domain.Features.Ledger.Entity;
 using Ryze.Domain.Features.Ledger.Enum;
@@ -305,6 +306,33 @@ public sealed class InMemoryLedgerRepository(IBalanceCalculator balanceCalc) : I
         var items = list.Skip(skip).Take(take).ToList();
 
         return Task.FromResult<(IReadOnlyList<JournalEntry>, int)>((items, totalCount));
+    }
+
+    /// <inheritdoc />
+    public async IAsyncEnumerable<JournalEntry> StreamEntriesAsync(
+        string accountId,
+        DateTimeOffset? dateFrom = null,
+        DateTimeOffset? dateTo = null,
+        EntryStatus? status = null,
+        [EnumeratorCancellation] CancellationToken ct = default)
+    {
+        var query = Entries.Values.Where(x => x.Account.AccountId == accountId).AsEnumerable();
+
+        if (dateFrom.HasValue)
+            query = query.Where(x => x.Timestamp >= dateFrom.Value);
+        if (dateTo.HasValue)
+            query = query.Where(x => x.Timestamp <= dateTo.Value);
+        if (status.HasValue)
+            query = query.Where(x => x.Posting.Status == status.Value);
+
+        var list = query.OrderBy(x => x.Timestamp).ThenBy(x => x.Id).ToList();
+
+        foreach (var entry in list)
+        {
+            if (ct.IsCancellationRequested) yield break;
+            yield return entry;
+            await Task.Yield();
+        }
     }
 
     /// <summary>

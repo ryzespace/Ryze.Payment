@@ -33,13 +33,13 @@ public sealed class RedisLedgerPeriodCache : IDisposable
     /// <param name="muxer">Redis connection multiplexer used for pub/sub communication. </param>
     /// <param name="logger">logger used to record cache invalidation publication failures. </param>
     public RedisLedgerPeriodCache(
-        IConnectionMultiplexer muxer,
+        IConnectionMultiplexer? muxer = null,
         ILogger<RedisLedgerPeriodCache>? logger = null)
     {
         _muxer = muxer;
         _logger = logger;
 
-        _muxer.GetSubscriber().Subscribe(
+        _muxer?.GetSubscriber().Subscribe(
             RedisChannel.Literal(InvalidationChannel),
             (_, _) => _cached = null);
     }
@@ -93,6 +93,8 @@ public sealed class RedisLedgerPeriodCache : IDisposable
     {
         _cached = null;
 
+        if (_muxer == null) return;
+
         try
         {
             await _muxer.GetSubscriber()
@@ -113,6 +115,6 @@ public sealed class RedisLedgerPeriodCache : IDisposable
     /// Releases resources associated with the Redis subscription.
     /// </summary>
     public void Dispose() =>
-        _muxer.GetSubscriber()
+        _muxer?.GetSubscriber()
             .Unsubscribe(RedisChannel.Literal(InvalidationChannel));
 }
