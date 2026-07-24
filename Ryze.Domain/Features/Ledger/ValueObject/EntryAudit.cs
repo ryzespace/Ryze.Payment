@@ -9,10 +9,7 @@ namespace Ryze.Domain.Features.Ledger.ValueObject;
 /// Provides traceability metadata for accounting operations,
 /// including the type of transaction that produced the entry,
 /// the actor responsible for initiating the operation,
-/// optional business context, and idempotency tracking.
-///
-/// Audit data is immutable and becomes part of the historical
-/// accounting record.
+/// context, and idempotency tracking.
 /// </remarks>
 public sealed record EntryAudit
 {
@@ -20,7 +17,7 @@ public sealed record EntryAudit
     /// Gets transaction category that created this entry.
     /// </summary>
     /// <remarks>
-    /// Examples include wallet top-up, withdrawal, payment,
+    /// Examples include wallet topup, withdrawal, payment,
     /// refund, fee, escrow operation, or correction.
     /// </remarks>
     public required TransactionType TransactionType { get; init; }
@@ -35,10 +32,6 @@ public sealed record EntryAudit
     /// Gets the optional business reason or explanation
     /// associated with the transaction.
     /// </summary>
-    /// <remarks>
-    /// Used for operational visibility, reporting,
-    /// reconciliation, and audit investigations.
-    /// </remarks>
     public string? Reason { get; init; }
 
     /// <summary>

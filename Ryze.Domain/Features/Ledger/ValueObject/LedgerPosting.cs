@@ -12,22 +12,28 @@ namespace Ryze.Domain.Features.Ledger.ValueObject;
 ///
 /// A posting is immutable and forms one side of double entry transaction.
 /// </remarks>
-public sealed record LedgerPosting
+public sealed record LedgerPosting(
+    EntryType Type,
+    decimal Amount,
+    Currency Currency,
+    decimal RunningBalance,
+    EntryStatus Status,
+    string Description)
 {
     /// <summary>
     /// Defines whether the posting is a debit or credit entry.
     /// </summary>
-    public required EntryType Type { get; init; }
+    public required EntryType Type { get; init; } = Type;
 
     /// <summary>
     /// Monetary amount of the posting.
     /// </summary>
-    public required decimal Amount { get; init; }
+    public required decimal Amount { get; init; } = Amount;
 
     /// <summary>
     /// Currency of the posted amount.
     /// </summary>
-    public required Currency Currency { get; init; }
+    public required Currency Currency { get; init; } = Currency;
 
     /// <summary>
     /// Account balance after applying this posting.
@@ -35,15 +41,15 @@ public sealed record LedgerPosting
     /// <remarks>
     /// Used as historical snapshot for auditing and reconciliation.
     /// </remarks>
-    public required decimal RunningBalance { get; init; }
+    public required decimal RunningBalance { get; init; } = RunningBalance;
 
     /// <summary>
     /// Current lifecycle state of the entry.
     /// </summary>
-    public required EntryStatus Status { get; init; }
+    public required EntryStatus Status { get; init; } = Status;
 
     /// <summary>
     /// Explanation of the posting.
     /// </summary>
-    public required string Description { get; init; }
+    public required string Description { get; init; } = Description;
 }
