@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Marten;
 using Marten.Linq;
 using Ryze.Application.Features.Ledger.Helpers;
@@ -8,12 +9,12 @@ using Ryze.Domain.Features.Ledger.Repositories;
 namespace Ryze.Infrastructure.Features.Ledger.Repositories.Marten;
 
 /// <summary>
-/// Provides Marten-backed query operations for ledger journal entries.
+/// query operations for ledger journal entries.
 /// </summary>
 /// <remarks>
 /// Supports filtering by account, date range, amount, status, and posting direction.
-/// Provides both offset-based pagination for conventional page navigation and
-/// cursor-based pagination for efficient traversal of large or frequently changing
+/// Provides both offset based pagination for conventional page navigation and
+/// cursor based pagination for efficient traversal of large or frequently changing
 /// journal entry datasets.
 /// </remarks>
 public sealed class MartenLedgerEntryQuery(IDocumentSession session) : ILedgerEntryQuery
@@ -246,5 +247,41 @@ public sealed class MartenLedgerEntryQuery(IDocumentSession session) : ILedgerEn
             ("Timestamp", "Asc") => query.OrderBy(x => x.Timestamp).ThenBy(x => x.Id),
             _ => query.OrderByDescending(x => x.Timestamp).ThenByDescending(x => x.Id)
         };
+    }
+
+    /// <summary>
+    /// Streams journal entries for the specified ledger account using the requested filters.
+    /// </summary>
+    /// <remarks>
+    /// Entries are ordered by timestamp ascending and then by identifier ascending
+    /// to provide deterministic ordering required for ledger chain verification.
+    /// </remarks>
+    /// <param name="accountId">The unique identifier of the ledger account.</param>
+    /// <param name="dateFrom">Optional start timestamp used to filter journal entries.</param>
+    /// <param name="dateTo">Optional end timestamp used to filter journal entries.</param>
+    /// <param name="status">Optional entry status used to filter journal entries.</param>
+    /// <param name="ct">Token that can be used to cancel the asynchronous enumeration.</param>
+    /// <returns>
+    /// An asynchronous stream of journal entries matching the specified filters,
+    /// ordered by timestamp and entry identifier.
+    /// </returns>
+    public async IAsyncEnumerable<JournalEntry> StreamEntriesAsync(
+        string accountId,
+        DateTimeOffset? dateFrom = null,
+        DateTimeOffset? dateTo = null,
+        EntryStatus? status = null,
+        [EnumeratorCancellation] CancellationToken ct = default)
+    {
+        IQueryable<JournalEntry> query = BuildFilteredQuery(
+            accountId, dateFrom, dateTo, null, null, status, null);
+
+        // Chain verification requires specific ordering: Timestamp ASC, Id ASC
+        query = query.OrderBy(x => x.Timestamp).ThenBy(x => x.Id);
+
+        var asyncEnumerable = query.ToAsyncEnumerable(ct);
+        await foreach (var entry in asyncEnumerable)
+        {
+            yield return entry;
+        }
     }
 }
