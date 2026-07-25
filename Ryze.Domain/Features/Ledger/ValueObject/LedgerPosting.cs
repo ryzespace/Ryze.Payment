@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Ryze.Domain.Features.Ledger.Enum;
 using Ryze.Domain.Shared.Enum;
 
@@ -12,6 +13,7 @@ namespace Ryze.Domain.Features.Ledger.ValueObject;
 ///
 /// A posting is immutable and forms one side of double entry transaction.
 /// </remarks>
+[method: SetsRequiredMembers]
 public sealed record LedgerPosting(
     EntryType Type,
     decimal Amount,

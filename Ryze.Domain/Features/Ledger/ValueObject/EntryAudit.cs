@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Ryze.Domain.Features.Ledger.Enum;
 
 namespace Ryze.Domain.Features.Ledger.ValueObject;
@@ -50,6 +51,7 @@ public sealed record EntryAudit
     /// <param name="initiatedBy">Actor responsible for initiating the operation. </param>
     /// <param name="reason">Optional business explanation. </param>
     /// <param name="idempotencyKey">Optional idempotency identifier.</param>
+    [SetsRequiredMembers]
     public EntryAudit(
         TransactionType transactionType,
         string initiatedBy,

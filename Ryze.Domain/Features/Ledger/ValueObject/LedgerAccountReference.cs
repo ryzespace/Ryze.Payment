@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Ryze.Domain.Features.Ledger.Entity;
 
 namespace Ryze.Domain.Features.Ledger.ValueObject;
@@ -40,6 +41,7 @@ public sealed record LedgerAccountReference
     /// </summary>
     /// <param name="accountId"> Unique ledger account identifier.</param>
     /// <param name="accountType"> Logical account classification.</param>
+    [SetsRequiredMembers]
     public LedgerAccountReference(
         string accountId,
         string accountType)

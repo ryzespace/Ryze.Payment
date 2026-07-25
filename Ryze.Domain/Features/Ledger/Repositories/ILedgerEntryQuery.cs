@@ -85,4 +85,18 @@ public interface ILedgerEntryQuery
         int limit = 50,
         string? continuationToken = null,
         CancellationToken ct = default);
+
+    /// <summary>
+    /// Streams journal entries for an account using keyset pagination.
+    /// </summary>
+    /// <remarks>
+    /// Optimized for large scale audit and chain verification.
+    /// Uses Timestamp ASC, Id ASC ordering for consistent reconstruction.
+    /// </remarks>
+    IAsyncEnumerable<JournalEntry> StreamEntriesAsync(
+        string accountId,
+        DateTimeOffset? dateFrom = null,
+        DateTimeOffset? dateTo = null,
+        EntryStatus? status = null,
+        CancellationToken ct = default);
 }
