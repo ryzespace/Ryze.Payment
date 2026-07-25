@@ -1,4 +1,4 @@
-namespace Ryze.Domain.Features.Shared;
+namespace Ryze.Domain.Shared;
 
 /// <summary>
 /// Represents business rule violation raised by the domain model.

@@ -1,4 +1,4 @@
-namespace Ryze.Domain.Features.Shared.Enum;
+namespace Ryze.Domain.Shared.Enum;
 
 /// <summary>
 /// Classification of wallet product type.
