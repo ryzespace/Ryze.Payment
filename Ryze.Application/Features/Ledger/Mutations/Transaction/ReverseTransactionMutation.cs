@@ -37,6 +37,11 @@ public sealed class ReverseTransactionMutation(ReverseTransactionContext ctx, Mu
     mutationContext)
 {
     /// <summary>
+    /// Gets the reversal context containing the original transaction and reversal metadata.
+    /// </summary>
+    public ReverseTransactionContext Ctx => ctx;
+
+    /// <summary>
     /// Applies the reversal mutation and creates an inverse ledger transaction.
     /// </summary>
     /// <param name="state">
@@ -56,9 +61,7 @@ public sealed class ReverseTransactionMutation(ReverseTransactionContext ctx, Mu
         var original = ctx.OriginalTransaction;
 
         var builder = LedgerTransactionBuilder
-            .Create(TransactionType.Refund, ctx.InitiatedBy)
-            .WithIdempotencyKey(ctx.ReversalIdempotencyKey)
-            .WithReason(ctx.Reason);
+            .Create(TransactionType.Refund, ctx.InitiatedBy).WithIdempotencyKey(ctx.ReversalIdempotencyKey).WithReason(reason: ctx.Reason);
 
         foreach (var entry in original.Entries)
         {
