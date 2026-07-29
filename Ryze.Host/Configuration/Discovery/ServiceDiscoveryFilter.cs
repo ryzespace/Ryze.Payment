@@ -93,4 +93,15 @@ public static class ServiceDiscoveryFilter
            && !opts.ExcludedNamespaces.Any(ns.Contains)
            && (opts.AllowedNamespaces.Count == 0 || opts.AllowedNamespaces.Any(ns.Contains))
            && (opts.AllowedLayers.Count == 0 || opts.AllowedLayers.Contains(layer));
+
+    /// <summary>
+    /// Checks if the interface is a common system interface that should not be used for automatic registration.
+    /// </summary>
+    public static bool IsCommonSystemInterface(Type type)
+    {
+        if (!type.IsInterface) return false;
+
+        var name = type.Name;
+        return name is "IDisposable" or "IAsyncDisposable" or "IEquatable`1";
+    }
 }

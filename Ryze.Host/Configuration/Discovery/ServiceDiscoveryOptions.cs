@@ -26,7 +26,7 @@ public sealed class ServiceDiscoveryOptions
     /// Specific types to ignore during service registration.
     /// </summary>
     public List<Type> ExcludedTypes { get; set; } = [];
-    
+
     public List<string> AllowedLayers { get; set; } = [];
 
     /// <summary>
@@ -43,7 +43,7 @@ public sealed class ServiceDiscoveryOptions
     /// If false, ServiceDiscovery will not log debug messages.
     /// </summary>
     public bool EnableLogging { get; set; } = true;
-    
+
     /// <summary>
     /// Default service lifetime for all discovered types.
     /// </summary>

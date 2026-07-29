@@ -41,7 +41,7 @@ public static class ServiceDiscoveryExtensions
             .FromAssemblies(assemblies)
             .AddClasses(classes => classes
                 .Where(type => ServiceDiscoveryFilter.IsValidServiceType(type, logger, opts)))
-            .AsImplementedInterfaces()
+            .AsImplementedInterfaces(t => !ServiceDiscoveryFilter.IsCommonSystemInterface(t))
             .WithLifetime(opts.Lifetime)
         );
 
