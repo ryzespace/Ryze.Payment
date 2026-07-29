@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="Payment.Tests/Payment.Tests.csproj" />
   <Project Path="Ryze.Application/Ryze.Application.csproj" />
   <Project Path="Ryze.Domain/Ryze.Domain.csproj" />
   <Project Path="Ryze.Host/Ryze.Host.csproj" />

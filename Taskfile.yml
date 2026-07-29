@@ -1,0 +1,107 @@
+# https://taskfile.dev
+version: '3'
+
+dotenv:
+  - .env
+
+vars:
+  SLN: Ryze.Payment.slnx
+  CFG: '{{ if eq .DOTNET_ENVIRONMENT "Production" }}Release{{ else }}Debug{{ end }}'
+  IMG: ryzespace/payment
+
+tasks:
+  default:
+    desc: Show available tasks
+    silent: true
+    cmd: task --list-all
+
+  build:
+    desc: Build the solution
+    aliases: [b]
+    dir: '{{ .USER_WORKING_DIR }}'
+    cmds:
+      - dotnet build {{ .SLN }} --configuration {{ .CFG }} --nologo
+    preconditions:
+      - sh: which dotnet
+        msg: Install .NET SDK from https://dotnet.microsoft.com/download
+    sources:
+      - '**/*.cs'
+      - '**/*.csproj'
+    method: timestamp
+
+  test:
+    desc: Run tests (scoped via PROJECT, FILTER env vars)
+    aliases: [t]
+    deps: [build]
+    vars:
+      PROJECT: '{{ .PROJECT | default .SLN }}'
+    env:
+      DOTNET_ENVIRONMENT: Testing
+    cmds:
+      - >
+        dotnet test {{ .PROJECT }}
+        --no-build --configuration {{ .CFG }}
+        --verbosity minimal --nologo
+        {{ if .FILTER }}--filter "{{ .FILTER }}"{{ end }}
+    sources:
+      - '{{ .PROJECT }}/**/*.cs'
+    generates:
+      - '**/TestResults/**'
+
+  watch:
+    desc: Rerun tests on file changes (TDD mode)
+    aliases: [w]
+    interactive: true
+    cmds:
+      - dotnet watch test --project {{ .SLN }} --no-restore --configuration {{ .CFG }}
+
+  compose:
+    desc: Manage Docker infra — task compose ACTION=up|down|logs|ps|rebuild
+    vars:
+      ACTION: '{{ .ACTION | default "ps" }}'
+    prompt: '{{ if eq .ACTION "down" }}Stop all containers?{{ end }}'
+    cmds:
+      - docker compose -f docker-compose.yml {{ .ACTION }}
+        {{- if eq .ACTION "up" }} -d{{ end }}
+      - |
+        {{ if eq .ACTION "up" -}}
+          echo "DB :5433  Redis :6380"
+        {{- end }}
+    preconditions:
+      - sh: docker info >/dev/null 2>&1
+        msg: Docker is required — install from https://docs.docker.com/engine/install
+    requires:
+      vars: [ACTION]
+
+  db:
+    desc: Manage database — task db ACTION=restart|reset|psql
+    vars:
+      ACTION: '{{ .ACTION | default "ps" }}'
+    prompt: '{{ if eq .ACTION "reset" }}This will DROP ALL DATA. Continue?{{ end }}'
+    cmds:
+      - |
+        {{ if eq .ACTION "restart" -}}
+          docker compose -f docker-compose.yml restart Payment-db
+          echo "Payment-db restarted"
+        {{- else if eq .ACTION "reset" -}}
+          docker compose -f docker-compose.yml exec Payment-db \
+            psql -U postgres -d Payment -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+          echo "Payment-db schema reset"
+        {{- else if eq .ACTION "psql" -}}
+          docker compose -f docker-compose.yml exec -it Payment-db psql -U postgres -d Payment
+        {{- else -}}
+          docker compose -f docker-compose.yml ps --filter status=running | grep -q Payment-db
+          echo "Payment-db: running"
+        {{- end }}
+    preconditions:
+      - sh: docker compose -f docker-compose.yml ps --status running 2>/dev/null | grep -q Payment-db
+        msg: "Payment-db is not running — start with: task compose ACTION=up"
+    requires:
+      vars: [ACTION]
+
+  ci:
+    desc: Full pipeline — clean, build, test
+    cmds:
+      - dotnet clean {{ .SLN }} --nologo 2>/dev/null; true
+      - task: build
+      - task: test

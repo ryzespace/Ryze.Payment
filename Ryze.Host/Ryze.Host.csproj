@@ -7,13 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
         <PackageReference Include="ModularityKit.Context" Version="1.0.0-preview.1" />
+        <PackageReference Include="OpenTelemetry" Version="1.14.0" />
+        <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
         <PackageReference Include="Scrutor" Version="7.0.0" />
+        <PackageReference Include="WolverineFx.FluentValidation" Version="5.10.0" />
+
+        <PackageReference Include="WolverineFx.Marten" Version="5.10.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Ryze.Infrastructure\Ryze.Infrastructure.csproj" />
     </ItemGroup>
+    
 
 </Project>

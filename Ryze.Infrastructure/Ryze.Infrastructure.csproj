@@ -9,7 +9,10 @@
 
     <ItemGroup>
         <_AllProtoFiles Include="Features\**\*.proto" />
+        <_ProtoFolders Include="Features/Wallet/Contracts/" />
         <_ProtoFolders Include="Features/WalletBalance/Contracts/" />
+        <_ProtoFolders Include="Features/Payment/Contracts/" />
+        <_ProtoFolders Include="Features/Transfers/Contracts/" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -18,26 +21,41 @@
 
     <ItemGroup>
         <Protobuf Include="Features\**\*.proto" ProtoRoot="Features" GrpcServices="Both" Access="Public" AdditionalImportDirs="$(_ProtoDirList)" />
+        <Protobuf Update="Features\Transfers\Contracts\Transfer.proto">
+          <ProtoCompile>True</ProtoCompile>
+          <CompileOutputs>True</CompileOutputs>
+          <OutputDir>obj\Debug/net10.0/</OutputDir>
+          <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
+        <Protobuf Update="Features\Transfers\Contracts\TransferIntent.proto">
+          <ProtoCompile>True</ProtoCompile>
+          <CompileOutputs>True</CompileOutputs>
+          <OutputDir>obj\Debug/net10.0/</OutputDir>
+          <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
+        <Protobuf Update="Features\Transfers\Contracts\TransferEvents.proto">
+          <ProtoCompile>True</ProtoCompile>
+          <CompileOutputs>True</CompileOutputs>
+          <OutputDir>obj\Debug/net10.0/</OutputDir>
+          <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Google.Protobuf" Version="3.33.4" />
         <PackageReference Include="Grpc.Core.Api" Version="2.76.0" />
+        <PackageReference Include="StackExchange.Redis" Version="2.8.31" />
         <PackageReference Include="Grpc.Tools" Version="2.72.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Mapster" Version="10.0.0-pre01" />
+        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="10.0.9" />
         <PackageReference Include="ModularityKit.Context" Version="1.0.0-preview.1" />
         <PackageReference Include="ModularityKit.Context.AspNet" Version="1.0.0-preview.1" />
         <PackageReference Include="Ryzespace.Contracts.Shared" Version="1.0.1" />
+        <PackageReference Include="Stripe.net" Version="51.1.0" />
         <PackageReference Include="WolverineFx" Version="5.10.0" />
         <PackageReference Include="WolverineFx.Marten" Version="5.10.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Processors\Interfaces\" />
-        <Folder Include="Processors\Operations\" />
-        <Folder Include="Processors\Processor\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -46,5 +64,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Ryze.Application\Ryze.Application.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Features\Ledger\Handlers\Projections\" />
+      <Folder Include="Features\Wallet\Repositories\InMemory\" />
     </ItemGroup>
 </Project>

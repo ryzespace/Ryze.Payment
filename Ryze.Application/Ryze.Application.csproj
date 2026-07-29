@@ -17,23 +17,14 @@
       <PackageReference Include="Mapster" Version="10.0.0-pre01" />
       <PackageReference Include="ModularityKit.Context" Version="1.0.0-preview.1" />
       <PackageReference Include="ModularityKit.Context.AspNet" Version="1.0.0-preview.1" />
-      <PackageReference Include="ModularityKit.Mutator" Version="1.8.0" />
+      <PackageReference Include="ModularityKit.Mutator" Version="1.9.0" />
       <PackageReference Include="OpenTelemetry" Version="1.14.0" />
       <PackageReference Include="Polly" Version="8.7.0" />
       <PackageReference Include="Ryzespace.Contracts.Shared" Version="1.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\Payment\Mapping\" />
-      <Folder Include="Features\Payment\Mutations\" />
-      <Folder Include="Features\Payment\Policies\Security\" />
-      <Folder Include="Features\Payment\Policies\Validation\" />
-      <Folder Include="Features\Payment\UseCase\Commands\Validations\" />
-      <Folder Include="Features\Payment\UseCase\Queries\Handlers\" />
-      <Folder Include="Features\Payment\UseCase\Queries\Requests\" />
-      <Folder Include="Features\Payment\UseCase\Queries\Validations\" />
       <Folder Include="Features\Requests\Services\" />
       <Folder Include="Features\Transfer\UseCase\Commands\Validations\" />
     </ItemGroup>
-
 </Project>
