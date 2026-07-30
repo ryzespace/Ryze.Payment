@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package ryzespace.payment.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "RyzeSpace.Payment.Contracts.V1";
+
+enum TransferEventType {
+  TRANSFER_EVENT_UNSPECIFIED = 0;
+
+  TRANSFER_CREATED = 1;
+  TRANSFER_PROCESSING_STARTED = 2;
+  TRANSFER_AUTHORIZED = 3;
+  TRANSFER_COMPLETED = 4;
+  TRANSFER_FAILED = 5;
+  TRANSFER_CANCELLED = 6;
+  TRANSFER_REVERSED = 7;
+}
+
+message TransferEvent
+{
+  string event_id = 1;
+  string transfer_id = 2;
+  TransferEventType event_type = 3;
+  google.protobuf.Timestamp occurred_at = 4;
+  string actor = 5;
+  string reason = 6;
+  map<string, string> metadata = 7;
+}
+
+service TransferEvents
+{
+  rpc ListTransferEvents(GetTransferEventsRequest)
+      returns (GetTransferEventsResponse);
+}
+
+message GetTransferEventsRequest
+{
+  string transfer_id = 1;
+}
+
+message GetTransferEventsResponse
+{
+  repeated TransferEvent events = 1;
+}

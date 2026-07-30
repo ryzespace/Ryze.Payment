@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+package ryzespace.payment.v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "Transfer.proto";
+
+option csharp_namespace = "RyzeSpace.Payment.Contracts.V1";
+
+enum TransferIntentStatus
+{
+  TRANSFER_INTENT_STATUS_UNSPECIFIED = 0;
+
+  TRANSFER_INTENT_STATUS_REQUIRES_SOURCE = 1;
+  TRANSFER_INTENT_STATUS_REQUIRES_DESTINATION = 2;
+  TRANSFER_INTENT_STATUS_REQUIRES_CONFIRMATION = 3;
+  TRANSFER_INTENT_STATUS_PROCESSING = 4;
+  TRANSFER_INTENT_STATUS_SUCCEEDED = 5;
+  TRANSFER_INTENT_STATUS_FAILED = 6;
+  TRANSFER_INTENT_STATUS_CANCELLED = 7;
+  TRANSFER_INTENT_STATUS_REVERSED = 8;
+}
+
+enum TransferAttemptStatus
+{
+  TRANSFER_ATTEMPT_STATUS_UNSPECIFIED = 0;
+
+  TRANSFER_ATTEMPT_STATUS_PENDING = 1;
+  TRANSFER_ATTEMPT_STATUS_PROCESSING = 2;
+  TRANSFER_ATTEMPT_STATUS_SUCCEEDED = 3;
+  TRANSFER_ATTEMPT_STATUS_FAILED = 4;
+  TRANSFER_ATTEMPT_STATUS_REVERSED = 5;
+}
+
+message TransferIntent
+{
+  string transfer_intent_id = 1;
+  string source_wallet_id = 2;
+  string destination_wallet_id = 3;
+  Money amount = 4;
+  TransferIntentStatus status = 5;
+  string description = 6;
+  string reference = 7;
+  string idempotency_key = 8;
+  repeated string transfer_attempt_ids = 9;
+  string successful_transfer_attempt_id = 10;
+  string transfer_id = 11;
+  TransferType transfer_type = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+  google.protobuf.Timestamp completed_at = 15;
+  map<string, string> metadata = 16;
+  repeated string tags = 17;
+}
+
+message TransferAttempt
+{
+  string transfer_attempt_id = 1;
+  string transfer_intent_id = 2;
+  TransferType transfer_type = 3;
+  TransferAttemptStatus status = 4;
+  string provider_reference = 5;
+  string provider_error_code = 6;
+  string provider_error_message = 7;
+  google.protobuf.Timestamp started_at = 8;
+  google.protobuf.Timestamp completed_at = 9;
+  map<string, string> metadata = 10;
+}
+
+service TransferIntents
+{
+  rpc CreateTransferIntent(CreateTransferIntentRequest)
+      returns (CreateTransferIntentResponse);
+
+  rpc ConfirmTransferIntent(ConfirmTransferIntentRequest)
+      returns (ConfirmTransferIntentResponse);
+
+  rpc CancelTransferIntent(CancelTransferIntentRequest)
+      returns (google.protobuf.Empty);
+
+  rpc GetTransferIntent(GetTransferIntentRequest)
+      returns (GetTransferIntentResponse);
+
+  rpc ListTransferIntents(ListTransferIntentsRequest)
+      returns (ListTransferIntentsResponse);
+}
+
+message CreateTransferIntentRequest
+{
+  string source_wallet_id = 1;
+  string destination_wallet_id = 2;
+  Money amount = 3;
+  TransferType transfer_type = 4;
+  string reference = 5;
+  string description = 6;
+  string idempotency_key = 7;
+  map<string, string> metadata = 8;
+  repeated string tags = 9;
+  bool allow_overdraft = 10;
+}
+
+message ConfirmTransferIntentRequest
+{
+  string transfer_intent_id = 1;
+}
+
+message CancelTransferIntentRequest
+{
+  string transfer_intent_id = 1;
+  string reason = 2;
+}
+
+message GetTransferIntentRequest
+{
+  string transfer_intent_id = 1;
+  bool include_attempts = 2;
+}
+
+message ListTransferIntentsRequest
+{
+  int32 page_size = 1;
+  string page_token = 2;
+  TransferIntentStatus status = 3;
+  string source_wallet_id = 4;
+  string destination_wallet_id = 5;
+  TransferType transfer_type = 6;
+  google.protobuf.Timestamp created_after = 7;
+  google.protobuf.Timestamp created_before = 8;
+  Currency currency = 9;
+  int64 min_amount = 10;
+  int64 max_amount = 11;
+}
+
+message CreateTransferIntentResponse
+{
+  string transfer_intent_id = 1;
+  TransferIntentStatus status = 2;
+  google.protobuf.Timestamp created_at = 3;
+}
+
+message ConfirmTransferIntentResponse
+{
+  string transfer_intent_id = 1;
+  TransferIntentStatus status = 2;
+  string transfer_attempt_id = 3;
+  string transfer_id = 4;
+}
+
+message GetTransferIntentResponse
+{
+  TransferIntent transfer_intent = 1;
+  repeated TransferAttempt attempts = 2;
+}
+
+message ListTransferIntentsResponse
+{
+  repeated TransferIntent transfer_intents = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}

@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package ryzespace.payment.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "RyzeSpace.Payment.Contracts.V1";
+
+enum TransferStatus {
+  TRANSFER_STATUS_UNSPECIFIED = 0;
+  TRANSFER_STATUS_PENDING = 1;
+  TRANSFER_STATUS_PROCESSING = 2;
+  TRANSFER_STATUS_COMPLETED = 3;
+  TRANSFER_STATUS_FAILED = 4;
+  TRANSFER_STATUS_CANCELLED = 5;
+  TRANSFER_STATUS_REVERSED = 6;
+  TRANSFER_STATUS_PARTIAL = 7;
+}
+
+enum TransferType {
+  TRANSFER_TYPE_UNSPECIFIED = 0;
+  TRANSFER_TYPE_INTERNAL = 1;
+  TRANSFER_TYPE_EXTERNAL = 2;
+  TRANSFER_TYPE_SCHEDULED = 3;
+  TRANSFER_TYPE_BATCH = 4;
+}
+
+enum ScheduleStatus {
+  SCHEDULE_STATUS_UNSPECIFIED = 0;
+  SCHEDULE_STATUS_PENDING = 1;
+  SCHEDULE_STATUS_PROCESSING = 2;
+  SCHEDULE_STATUS_COMPLETED = 3;
+  SCHEDULE_STATUS_FAILED = 4;
+  SCHEDULE_STATUS_CANCELLED = 5;
+}
+
+enum TransferBatchStatus {
+  TRANSFER_BATCH_STATUS_UNSPECIFIED = 0;
+  TRANSFER_BATCH_STATUS_PENDING = 1;
+  TRANSFER_BATCH_STATUS_PROCESSING = 2;
+  TRANSFER_BATCH_STATUS_COMPLETED = 3;
+  TRANSFER_BATCH_STATUS_PARTIAL = 4;
+  TRANSFER_BATCH_STATUS_FAILED = 5;
+}
+
+enum Currency {
+  CURRENCY_UNSPECIFIED = 0;
+  CURRENCY_USD = 1;
+  CURRENCY_EUR = 2;
+  CURRENCY_GBP = 3;
+  CURRENCY_PLN = 4;
+  CURRENCY_JPY = 5;
+  CURRENCY_CHF = 6;
+  CURRENCY_CAD = 7;
+  CURRENCY_AUD = 8;
+}
+
+message Money {
+  int64 units = 1;
+  Currency currency = 2;
+  int32 precision = 3;
+}
+
+enum FeeType {
+  FEE_TYPE_UNSPECIFIED = 0;
+  FEE_TYPE_FIXED = 1;
+  FEE_TYPE_PERCENTAGE = 2;
+  FEE_TYPE_NETWORK = 3;
+}
+
+message TransferFee {
+  Money amount = 1;
+  FeeType fee_type = 2;
+  string description = 3;
+}
+
+message Balance {
+  Money available_balance = 1;
+  Money current_balance = 2;
+  Money frozen_balance = 3;
+  Money pending_balance = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
